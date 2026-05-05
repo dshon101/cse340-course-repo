@@ -1,13 +1,62 @@
-<%- include('partials/header') %>
-    <main>
-        <h1>
-            <%= title %>
-        </h1>
-        <h2>Upcoming Service Projects</h2>
-        <ul>
-            <li>Park Cleanup - Join us to clean up local parks and make them beautiful!</li>
-            <li>Food Drive - Help collect and distribute food to those in need.</li>
-            <li>Community Tutoring - Volunteer to tutor students in various subjects.</li>
-        </ul>
-    </main>
-<%- include('partials/footer') %>
+<%- include('./partials/header') %>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">
+                <%= title %>
+            </h1>
+            <p class="page-subtitle">Explore active service projects seeking passionate volunteers.</p>
+        </div>
+    </section>
+
+    <section class="projects-section">
+        <div class="container">
+            <div class="projects-list">
+
+                <article class="project-card">
+                    <div class="project-meta">
+                        <span class="project-tag env">Environmental</span>
+                        <span class="project-date">Ongoing</span>
+                    </div>
+                    <h2>Riverside Park Cleanup</h2>
+                    <p>Join our monthly effort to remove litter and invasive species from Riverside Park's trail system
+                        and waterway banks.</p>
+                    <div class="project-footer">
+                        <span class="project-org">◈ Green Roots Initiative</span>
+                        <a href="#" class="btn btn-sm">Volunteer</a>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-meta">
+                        <span class="project-tag edu">Educational</span>
+                        <span class="project-date">Every Saturday</span>
+                    </div>
+                    <h2>After-School Math Program</h2>
+                    <p>Help middle schoolers build confidence in mathematics through one-on-one tutoring sessions every
+                        Saturday morning.</p>
+                    <div class="project-footer">
+                        <span class="project-org">◈ Bright Futures Tutoring</span>
+                        <a href="#" class="btn btn-sm">Volunteer</a>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-meta">
+                        <span class="project-tag comm">Community Service</span>
+                        <span class="project-date">Weekly</span>
+                    </div>
+                    <h2>Weekend Meal Distribution</h2>
+                    <p>Help sort, package, and deliver meals to homebound seniors and families facing food insecurity in
+                        our neighborhood.</p>
+                    <div class="project-footer">
+                        <span class="project-org">◈ Community Table</span>
+                        <a href="#" class="btn btn-sm">Volunteer</a>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <%- include('./partials/footer') %>

@@ -1,16 +1,59 @@
-<%- include('partials/header') %>
-    <main>
-        <h1>
-            <%= title %>
-        </h1>
-        <p>Here are a few of our partner organizations:</p>
-        <ul>
-            <li><img src="/images/brightfuture-logo.png" alt="BrightFuture Builders logo"><strong>BrightFuture
-                    Builders</strong>: info@brightfuture.org</li>
-            <li><img src="/images/greenharvest-logo.png" alt="GreenHarvest Growers logo"><strong>GreenHarvest Growers</strong>:
-                contact@greenharvest.org</li>
-            <li><img src="/images/unityserve-logo.png" alt="UnityServe Volunteers logo"><strong>UnityServe Volunteers</strong>:
-                hello@unityserve.org</li>
-        </ul>
-    </main>
-<%- include('partials/footer') %>
+<%- include('./partials/header') %>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">
+                <%= title %>
+            </h1>
+            <p class="page-subtitle">Meet the organizations driving change in our communities.</p>
+        </div>
+    </section>
+
+    <section class="org-section">
+        <div class="container">
+            <div class="org-grid">
+
+                <article class="org-card">
+                    <div class="org-img-wrap">
+                        <img src="images/greenharvest-logo.png" alt="Green Roots Initiative volunteers planting trees" />
+                    </div>
+                    <div class="org-body">
+                        <span class="org-tag">Environmental</span>
+                        <h2>Green Roots Initiative</h2>
+                        <p>A grassroots organization dedicated to urban reforestation and environmental education across
+                            the city.</p>
+                        <a href="#" class="btn btn-sm">Learn More</a>
+                    </div>
+                </article>
+
+                <article class="org-card">
+                    <div class="org-img-wrap">
+                        <img src="/images/brightfuture-logo.png" alt="Bright Futures tutors working with students" />
+                    </div>
+                    <div class="org-body">
+                        <span class="org-tag">Educational</span>
+                        <h2>Bright Futures Tutoring</h2>
+                        <p>Providing free tutoring and mentorship to underserved youth to bridge the educational
+                            opportunity gap.</p>
+                        <a href="#" class="btn btn-sm">Learn More</a>
+                    </div>
+                </article>
+
+                <article class="org-card">
+                    <div class="org-img-wrap">
+                        <img src="/images/unityserve-logo.png" alt="Community Table volunteers serving meals" />
+                    </div>
+                    <div class="org-body">
+                        <span class="org-tag">Community Service</span>
+                        <h2>Community Table</h2>
+                        <p>Fighting food insecurity by connecting surplus food from local restaurants to families in
+                            need every week.</p>
+                        <a href="#" class="btn btn-sm">Learn More</a>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <%- include('./partials/footer') %>

@@ -1,15 +1,51 @@
-<%- include('partials/header') %>
-    <main>
-        <h1>
-            <%= title %>
-        </h1>
-        <h2>Welcome to the CSE 340 Service Network!</h2>
-        <p>Our mission is to promote service across the world by connecting volunteers with service opportunities in their
-            community.</p>
-        
-        <img class="main-logo" src="images/cse340-service-network.png" alt="CSE 340 Service Network Logo">
-        <p>Whether you're looking to give back, find a project, or connect with like-minded individuals, you've come to
-            the right place. Explore our partner organizations and upcoming projects to find your next service
-            opportunity!</p>
-    </main>
-<%- include('partials/footer') %>
+<%- include('./partials/header') %>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="org-img-wrap">
+                <img src="/images/cse340-service-network.png" alt="Community Table volunteers serving meals" />
+            </div>
+            <span class="hero-tag">Making a Difference</span>
+            <h1 class="hero-title">Community<br />Service,<br /><em>Reimagined.</em></h1>
+            <p class="hero-desc">ServeConnect brings together organizations, volunteers, and service projects to create
+                lasting impact in communities everywhere.</p>
+            <div class="hero-actions">
+                <a href="/organizations" class="btn btn-primary">View Organizations</a>
+                <a href="/projects" class="btn btn-outline">Explore Projects</a>
+            </div>
+        </div>
+        <div class="hero-art">
+            <div class="art-ring ring-1"></div>
+            <div class="art-ring ring-2"></div>
+            <div class="art-ring ring-3"></div>
+            <div class="art-stat">
+                <span class="stat-num">120+</span>
+                <span class="stat-label">Partner Organizations</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why ServeConnect?</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">❋</div>
+                    <h3>Curated Organizations</h3>
+                    <p>We partner with verified nonprofits and community groups committed to meaningful change.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">◎</div>
+                    <h3>Diverse Projects</h3>
+                    <p>From environmental cleanups to tutoring programs, find service that matches your passion.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⟡</div>
+                    <h3>Organized Categories</h3>
+                    <p>Browse projects by cause — health, education, environment, and more — to find your fit.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<%- include('./partials/footer') %>
