@@ -1,0 +1,27 @@
+{
+  "name": "cse340-course-repo",
+  "version": "1.0.0",
+  "description": "New project testing.",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dshon101/cse340-course-repo.git"
+  },
+  "author": "Demetrious Shoniwa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dshon101/cse340-course-repo/issues"
+  },
+  "homepage": "https://github.com/dshon101/cse340-course-repo#readme",
+  "dependencies": {
+    "ejs": "^5.0.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
