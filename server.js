@@ -1,6 +1,10 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { testConnection } from './src/models/db.js';
+import { getAllOrganizations } from './src/models/organizations.js';
+import { getAllProjects } from './src/models/projects.js';
+import { getAllCategories } from './src/models/categories.js';
 
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -38,23 +42,32 @@ app.get('/', async (req, res) => {
 
 app.get('/organizations', async (req, res) => {
     const title = 'Our Partner Organizations';
-    const metaDesc = 'Meet our partner organizations driving environmental, educational, and community change.';
-    res.render('organizations', { title, metaDesc });
+    const metaDesc = 'Discover the community organizations we partner with to create meaningful volunteer opportunities.';
+    const organizations = await getAllOrganizations();
+    res.render('organizations', { title, metaDesc, organizations });
 });
 
 app.get('/projects', async (req, res) => {
     const title = 'Service Projects';
     const metaDesc = 'Explore active service projects and find volunteer opportunities that match your passion.';
-    res.render('projects', { title, metaDesc });
+    const projects = await getAllProjects();
+    console.log('Projects fetched:', projects); // verify in console, remove later
+    res.render('projects', { title, metaDesc, projects });
 });
 
 app.get('/categories', async (req, res) => {
     const title = 'Service Project Categories';
     const metaDesc = 'Browse service opportunities by category: environmental, educational, community service, and health and wellness.';
-    res.render('categories', { title, metaDesc });
+    const categories = await getAllCategories();
+    res.render('categories', { title, metaDesc, categories });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://127.0.0.1:${PORT}`);
-  console.log(`Environment: ${NODE_ENV}`);
+app.listen(PORT, async () => {
+  try {
+    await testConnection();
+    console.log(`Server is running at http://127.0.0.1:${PORT}`);
+    console.log(`Environment: ${NODE_ENV}`);
+  } catch (error) {
+    console.error('Error connecting to the database:', error);
+  }
 });

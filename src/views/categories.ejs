@@ -2,7 +2,9 @@
 
     <section class="page-hero">
         <div class="container">
-            <h1 class="page-title"><%= title %></h1>
+            <h1 class="page-title">
+                <%= title %>
+            </h1>
             <p class="page-subtitle">Find service opportunities organized by cause and impact area.</p>
         </div>
     </section>
@@ -11,34 +13,15 @@
         <div class="container">
             <div class="categories-grid">
 
-                <article class="category-card cat-env">
-                    <div class="cat-icon">🌿</div>
-                    <h2>Environmental</h2>
-                    <p>Park cleanups, tree planting, conservation efforts, and sustainability initiatives protecting our natural world.</p>
-                    <a href="/projects" class="btn btn-outline btn-sm">Browse Projects</a>
-                </article>
+                <% categories.forEach(category=> { %>
+                    <article class="category-card">
+                        <h2>
+                            <%= category.name %>
+                        </h2>
+                        <a href="/projects" class="btn btn-outline btn-sm">Browse Projects</a>
+                    </article>
+                    <% }); %>
 
-                <article class="category-card cat-edu">
-                    <div class="cat-icon">📚</div>
-                    <h2>Educational</h2>
-                    <p>Tutoring, mentorship, literacy programs, and workshops that open doors for learners of all ages.
-                    </p>
-                    <a href="/projects" class="btn btn-outline btn-sm">Browse Projects</a>
-                </article>
-
-                <article class="category-card cat-comm">
-                    <div class="cat-icon">🤝</div>
-                    <h2>Community Service</h2>
-                    <p>Food drives, neighborhood improvement, homeless outreach, and programs that strengthen the social fabric.</p>
-                    <a href="/projects" class="btn btn-outline btn-sm">Browse Projects</a>
-                </article>
-
-                <article class="category-card cat-health">
-                    <div class="cat-icon">💚</div>
-                    <h2>Health and Wellness</h2>
-                    <p>Mental health support, fitness programs, health fairs, and initiatives promoting well-being for all.</p>
-                    <a href="/projects" class="btn btn-outline btn-sm">Browse Projects</a>
-                </article>
             </div>
         </div>
     </section>

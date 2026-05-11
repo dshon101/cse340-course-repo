@@ -5,7 +5,7 @@
             <h1 class="page-title">
                 <%= title %>
             </h1>
-            <p class="page-subtitle">Explore active service projects seeking passionate volunteers.</p>
+            <p class="page-subtitle">Explore active service projects and find volunteer opportunities that match your passion.</p>
         </div>
     </section>
 
@@ -13,47 +13,25 @@
         <div class="container">
             <div class="projects-list">
 
-                <article class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag env">Environmental</span>
-                        <span class="project-date">Ongoing</span>
-                    </div>
-                    <h2>Riverside Park Cleanup</h2>
-                    <p>Join our monthly effort to remove litter and invasive species from Riverside Park's trail system
-                        and waterway banks.</p>
-                    <div class="project-footer">
-                        <span class="project-org">◈ Green Roots Initiative</span>
-                        <a href="#" class="btn btn-sm">Volunteer</a>
-                    </div>
-                </article>
-
-                <article class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag edu">Educational</span>
-                        <span class="project-date">Every Saturday</span>
-                    </div>
-                    <h2>After-School Math Program</h2>
-                    <p>Help middle schoolers build confidence in mathematics through one-on-one tutoring sessions every
-                        Saturday morning.</p>
-                    <div class="project-footer">
-                        <span class="project-org">◈ Bright Futures Tutoring</span>
-                        <a href="#" class="btn btn-sm">Volunteer</a>
-                    </div>
-                </article>
-
-                <article class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag comm">Community Service</span>
-                        <span class="project-date">Weekly</span>
-                    </div>
-                    <h2>Weekend Meal Distribution</h2>
-                    <p>Help sort, package, and deliver meals to homebound seniors and families facing food insecurity in
-                        our neighborhood.</p>
-                    <div class="project-footer">
-                        <span class="project-org">◈ Community Table</span>
-                        <a href="#" class="btn btn-sm">Volunteer</a>
-                    </div>
-                </article>
+                <% projects.forEach(project=> { %>
+                    <article class="project-card">
+                        <div class="project-meta">
+                            <span class="project-date">
+                                <%= new Date(project.project_date).toLocaleDateString('en-US', { year: 'numeric' , month: 'long' , day: 'numeric' , timeZone: 'UTC' }) %>
+                            </span>
+                        </div>
+                        <h2>
+                            <%= project.title %>
+                        </h2>
+                        <p>
+                            <%= project.description %>
+                        </p>
+                        <div class="project-footer">
+                            <span class="project-org">◈ <%= project.organization_name %></span>
+                            <span class="project-location">📍 <%= project.location %></span>
+                        </div>
+                    </article>
+                    <% }); %>
 
             </div>
         </div>

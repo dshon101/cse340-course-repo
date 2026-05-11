@@ -13,44 +13,25 @@
         <div class="container">
             <div class="org-grid">
 
-                <article class="org-card">
-                    <div class="org-img-wrap">
-                        <img src="images/greenharvest-logo.png" alt="Green Roots Initiative volunteers planting trees" />
-                    </div>
-                    <div class="org-body">
-                        <span class="org-tag">Environmental</span>
-                        <h2>Green Roots Initiative</h2>
-                        <p>A grassroots organization dedicated to urban reforestation and environmental education across
-                            the city.</p>
-                        <a href="#" class="btn btn-sm">Learn More</a>
-                    </div>
-                </article>
-
-                <article class="org-card">
-                    <div class="org-img-wrap">
-                        <img src="/images/brightfuture-logo.png" alt="Bright Futures tutors working with students" />
-                    </div>
-                    <div class="org-body">
-                        <span class="org-tag">Educational</span>
-                        <h2>Bright Futures Tutoring</h2>
-                        <p>Providing free tutoring and mentorship to underserved youth to bridge the educational
-                            opportunity gap.</p>
-                        <a href="#" class="btn btn-sm">Learn More</a>
-                    </div>
-                </article>
-
-                <article class="org-card">
-                    <div class="org-img-wrap">
-                        <img src="/images/unityserve-logo.png" alt="Community Table volunteers serving meals" />
-                    </div>
-                    <div class="org-body">
-                        <span class="org-tag">Community Service</span>
-                        <h2>Community Table</h2>
-                        <p>Fighting food insecurity by connecting surplus food from local restaurants to families in
-                            need every week.</p>
-                        <a href="#" class="btn btn-sm">Learn More</a>
-                    </div>
-                </article>
+                <% organizations.forEach(organization=> { %>
+                    <article class="org-card">
+                        <div class="org-img-wrap">
+                            <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo" />
+                        </div>
+                        <div class="org-body">
+                            <h2>
+                                <%= organization.name %>
+                            </h2>
+                            <p>
+                                <%= organization.description %>
+                            </p>
+                            <p>
+                                <%= organization.contact_email %>
+                            </p>
+                            <a href="#" class="btn btn-sm">Learn More</a>
+                        </div>
+                    </article>
+                    <% }); %>
 
             </div>
         </div>

@@ -1,0 +1,500 @@
+================================================================
+ CSE 340 - WEEK 01 COACHING SESSION TRANSCRIPT
+ Student: Demetrious
+================================================================
+
+COACH: Welcome! Just to be clear from the start, this is a coaching
+session, not a test. It is perfectly okay—and even encouraged—to say
+"I don't know" or "I made a mistake." That's the fastest way we'll
+learn today.
+
+I'm really looking forward to chatting through your assignment with
+you! Before we dive in, could you tell me your name so I know how to
+address you throughout our session?
+
+DEMETRIOUS: Demetrious
+
+COACH: Great to meet you, Demetrious! This is a safe space — there
+are no wrong answers here, and any gaps we find are just opportunities
+to learn something new together.
+
+To get us started, I'd love to hear a little about your experience
+with this assignment overall. How did it go for you? Was there
+anything that felt confusing or that you're particularly proud of?
+
+DEMETRIOUS: The assignment was something new for me, but not
+challenging or confusing. As I was learning the express and routing,
+I learnt a lot about how professionals hide their work in a nice and
+neat way, and I got to learn how to link EJS files and create the EJS
+templates too.
+
+COACH: That's a great reflection, Demetrious! It sounds like you
+picked up some really valuable real-world habits — keeping code
+organized and structured is something even experienced developers work
+hard at.
+
+You mentioned learning about Express and routing, which is a perfect
+place to start. Could you paste your server.js code into the chat so
+we can talk through how your routing is set up?
+
+----------------------------------------------------------------
+TOPIC 1: EXPRESS ROUTING
+----------------------------------------------------------------
+
+DEMETRIOUS: [Pasted server.js code]
+
+import express from 'express';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Define the application environment
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
+
+// Define the port number the server will listen on
+const PORT = process.env.PORT || 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+/**
+ * Configure Express middleware
+ */
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
+
+// Tell Express where to find your templates
+app.set('views', path.join(__dirname, 'src/views'));
+
+
+/**
+ * Routes
+ */
+app.get('/', async (req, res) => {
+    const title = 'Home';
+    const metaDesc = 'ServeConnect connects volunteers with community
+    organizations and service projects to create lasting impact.';
+    res.render('home', { title, metaDesc });
+});
+
+app.get('/organizations', async (req, res) => {
+    const title = 'Our Partner Organizations';
+    const metaDesc = 'Meet our partner organizations driving
+    environmental, educational, and community change.';
+    res.render('organizations', { title, metaDesc });
+});
+
+app.get('/projects', async (req, res) => {
+    const title = 'Service Projects';
+    const metaDesc = 'Explore active service projects and find
+    volunteer opportunities that match your passion.';
+    res.render('projects', { title, metaDesc });
+});
+
+app.get('/categories', async (req, res) => {
+    const title = 'Service Project Categories';
+    const metaDesc = 'Browse service opportunities by category:
+    environmental, educational, community service, and health
+    and wellness.';
+    res.render('categories', { title, metaDesc });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running at http://127.0.0.1:${PORT}`);
+  console.log(`Environment: ${NODE_ENV}`);
+});
+
+COACH: Great, thank you for sharing that! This is really clean,
+well-organized code, Demetrious.
+
+Let me zoom in on one specific part. Looking at this route:
+
+    app.get('/categories', async (req, res) => {
+        const title = 'Service Project Categories';
+        const metaDesc = 'Browse service opportunities by category...';
+        res.render('categories', { title, metaDesc });
+    });
+
+Can you walk me through what app.get() is doing here — what does it
+mean when we use .get() specifically, and what happens step by step
+when someone visits /categories in their browser?
+
+DEMETRIOUS: When we type a URL into a browser and hit enter, the
+browser sends an HTTP GET request. Using app.get() tells Express to
+respond only to "read-only" requests. If someone tried to "POST" data
+to this same URL, this code would ignore it. Step-by-Step:
+
+- The Request: We type https://cse340ds.onrender.com in a browser.
+  The browser sends a GET request across the Internet to my server.
+- The Match: Express looks through my code. It finds
+  app.get('/categories',) and says, "Match found! Then it executes
+  the function attached to this."
+- Variable Assignment: Inside the function, two variables are created:
+  title and metaDesc. These contain the text strings I want displayed
+  on the page.
+- Rendering: The server hits res.render('categories', { ... }).
+  It looks for a file named categories in my "views" folder.
+  It "injects" my variables (title and metaDesc) into that file's
+  HTML template.
+- The Response: Express converts that template into a final, raw
+  HTML file.
+- The Delivery: The server sends that HTML back to your browser with
+  a 200 OK status code. Your browser then renders the page for
+  you to see.
+
+COACH: Demetrious, that is an excellent explanation! You clearly have
+a strong understanding of the request-response cycle — the detail
+about POST requests being ignored is a particularly sharp observation
+that a lot of beginners miss entirely.
+
+Now I'd like to dig into one specific line from your code. Looking at:
+
+    const PORT = process.env.PORT || 3000;
+
+Can you explain what process.env.PORT is doing here, and why you
+think the code uses || 3000 as a fallback rather than just hardcoding
+port 3000 directly?
+
+DEMETRIOUS: process.env is an object that contains the "environment
+variables" of the system where the code is running. PORT is a specific
+variable that hosting services use to tell your app which port it must
+listen on to be reachable by the public. It's basically telling the
+code: Use the official port provided by the host, OR if that doesn't
+exist, use 3000.
+
+COACH: Spot on! And that connects perfectly to something you mentioned
+earlier about professionals hiding their work in a "nice and neat way."
+Using environment variables is a great example of that — it keeps
+sensitive or environment-specific configuration out of your code.
+
+----------------------------------------------------------------
+TOPIC 2: JAVASCRIPT LANGUAGE PRINCIPLES
+----------------------------------------------------------------
+
+COACH: That actually leads us nicely into Topic 2. You're already
+using some strong JavaScript principles in this file — things like
+const, arrow functions, and async/await. Could you paste a code
+snippet from anywhere in your project that you feel best demonstrates
+your use of JavaScript language principles, and tell me why you
+picked that snippet?
+
+DEMETRIOUS: [Pasted JavaScript snippet]
+
+<script>
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('.site-nav');
+    toggle.addEventListener('click', () => nav.classList.toggle('open'));
+</script>
+
+I chose this because it shows that JavaScript isn't responsible for
+the look of the menu (CSS does that via the .open class), but it is
+responsible for the logic of when that look changes.
+
+I picked this snippet because it is like a light switch. querySelector
+is us finding the switch and the bulb. addEventListener is us waiting
+for a hand to flip the switch. And classList.toggle is the actual
+clicking sound, it flips the state from 'off' to 'on' without us
+needing to track the state manually.
+
+COACH: Demetrious, that light switch analogy is genuinely brilliant —
+that's exactly the kind of mental model that separates developers who
+just write code from developers who truly understand it. And your
+point about the separation of concerns between JavaScript and CSS is
+a very professional way of thinking.
+
+I want to zoom in on one specific part of that snippet:
+
+    toggle.addEventListener('click', () => nav.classList.toggle('open'));
+
+You used an arrow function () => here instead of a traditional
+function() {}. Can you tell me why you think arrow functions are used
+in modern JavaScript, and do you know if there's any difference
+between the two beyond just the shorter syntax?
+
+DEMETRIOUS: Arrow functions are the standard in modern JS because they
+make the code much more readable, especially for one-liner actions
+like my toggle. The difference is that a traditional function creates
+its own "context," meaning the value of this changes depending on how
+the function is called. In contrast, an arrow function doesn't have
+its own this at all, it simply borrows or inherits the context from
+the code surrounding it.
+
+COACH: That is a textbook-perfect answer, Demetrious! The this context
+difference is something that trips up even experienced developers, and
+you explained it clearly and accurately.
+
+----------------------------------------------------------------
+TOPIC 3: EJS PARTIALS AND PAGES
+----------------------------------------------------------------
+
+COACH: You're doing really well. Let's move on to Topic 3 — EJS
+partials and pages. You mentioned earlier that linking EJS files and
+creating templates was one of the new things you learned. Could you
+paste your header partial code so we can talk through how it works
+and why partials are useful?
+
+DEMETRIOUS: [Pasted header.ejs partial]
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="<%= metaDesc %>" />
+    <title><%= title %> | ServeConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:
+        wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" />
+    <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">ServeConnect</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                &#9776;
+            </button>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/organizations">Organizations</a></li>
+                    <li><a href="/projects">Projects</a></li>
+                    <li><a href="/categories">Categories</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+
+COACH: Really clean and well-structured partial, Demetrious! I can
+see you're using EJS tags in there too, which is great.
+
+I want to focus on these two specific lines:
+
+    <meta name="description" content="<%= metaDesc %>" />
+    <title><%= title %> | ServeConnect</title>
+
+Can you explain what the <%= %> tags are doing here, and how does the
+value of title and metaDesc actually get into this partial when the
+page loads — where do those values come from?
+
+DEMETRIOUS: Those <%= %> tags are interpolation tags used by a
+template engine. They act as placeholders that tell the server not to
+send the actual characters to the browser, but to change them for the
+actual value of the variable inside. The values for title and metaDesc
+come directly from my Route Handler in app.get(). This is what I know
+so far from what I have been studying.
+
+COACH: That is exactly right, Demetrious! You've connected the full
+data flow perfectly — from the route handler in server.js, through
+the res.render() call, all the way into the EJS template. That's the
+backbone of how server-side rendering works.
+
+You mentioned "this is what I know so far from what I've been
+studying" — I want to ask a quick follow-up on that. Do you know why
+the assignment specifies using <%= %> rather than <%- %>? What do you
+think the difference between those two tags might be?
+
+DEMETRIOUS: Yes, the main reason the assignment uses <%= %> is for
+security. This tag escapes the data, meaning it converts special
+characters into harmless text to prevent malicious code from running
+in the browser, a vital defense against Cross-Site Scripting (XSS)
+attacks. In contrast, the <%- %> tag renders raw HTML without any
+filtering. Since things like page titles and meta descriptions are
+just plain text, using the safer <%= %> tag ensures the data is
+treated as content rather than instructions the browser might
+accidentally execute.
+
+COACH: Demetrious, that is an outstanding answer — you didn't just
+know the "what," you knew the "why" behind the security decision.
+Understanding XSS attacks at this stage of your learning is impressive
+and will serve you well as you grow as a developer.
+
+----------------------------------------------------------------
+TOPIC 4: FRONTEND CSS
+----------------------------------------------------------------
+
+COACH: We've covered Express routing, JavaScript principles, and EJS
+partials beautifully. Let's move on to our final topic — CSS. Could
+you paste a CSS snippet from your stylesheet that you feel is
+interesting or that you made a deliberate decision about, and tell me
+why you chose that approach?
+
+DEMETRIOUS: [Pasted CSS snippet for organizations section]
+
+/* =============================================
+   ORGANIZATIONS
+   ============================================= */
+.org-section { padding: 5rem 0; }
+
+.org-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.org-card {
+    background: var(--clr-surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--clr-border);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.org-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.org-img-wrap {
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.org-img-env { background: #ddf0e6; }
+.org-img-edu { background: #dde8f7; }
+.org-img-comm { background: #fdeedd; }
+
+.org-img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.35s ease;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+}
+
+.org-card:hover .org-img-wrap img { transform: scale(1.06); }
+
+.org-body { padding: 1.75rem; }
+
+.org-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.75rem;
+    border-radius: 100px;
+    margin-bottom: 0.75rem;
+}
+
+.org-tag-env { background: #ddf0e6; color: var(--clr-env); }
+.org-tag-edu { background: #dde8f7; color: var(--clr-edu); }
+.org-tag-comm { background: #fdeedd; color: #8a4e1a; }
+
+.org-body h2 {
+    font-family: var(--ff-display);
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--clr-ink);
+}
+
+.org-body p {
+    color: var(--clr-ink-muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+Mainly, this is just a part of the organization snippet that handles
+everything from my sections, cards, images, and so on. I chose this
+because I think this is where I had to make a hard decision in
+designing it to look the part, and it turned out not to be bad.
+
+COACH: That's a great choice of snippet, Demetrious, and it clearly
+paid off visually! I can see a lot of thoughtful decisions in here.
+
+I want to zoom in on this specific line:
+
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+This is doing something quite powerful for your layout. Can you
+explain in your own words what auto-fill and minmax(300px, 1fr) are
+doing together, and what effect that has on the page when someone
+views it on a small screen versus a large screen?
+
+DEMETRIOUS: Basically, this line makes the layout smart and adaptable.
+The minmax part makes sure each column is at least 300px wide, but can
+get bigger if there's room. With auto-fill, the browser just packs as
+many columns as it can in a row. So, on a big screen, you get lots of
+columns, and on a small screen, they stack up nicely.
+
+COACH: Perfect explanation, Demetrious! You've just described
+responsive design in a nutshell — and the best part is you achieved
+it in a single line of CSS without needing any media queries for the
+grid itself. That's exactly how modern professional developers
+approach layout.
+
+I also noticed you used var(--clr-surface) and var(--radius) in your
+card styles. Can you tell me what those var() values are, where they
+are defined, and why using them is considered a better practice than
+just writing the color or size value directly?
+
+DEMETRIOUS: Those var() values are CSS Variables (also known as Custom
+Properties). They're like reusable nicknames for specific values,
+usually set at the top of your CSS file. Using them is super helpful
+because it keeps things consistent and makes it easier to make
+changes. Instead of searching through tons of code to change a color,
+you just update it in one place, and it changes everywhere. Plus, they
+make the code easier to read; var(--clr-surface) tells me it's for a
+background, while a bunch of random letters and numbers don't.
+
+================================================================
+SESSION SUMMARY
+================================================================
+
+COACH: Demetrious, that is a fantastic answer — and your point about
+readability is particularly sharp. var(--clr-surface) is genuinely
+more meaningful than #ffffff, and that kind of self-documenting code
+is something professional teams value highly because it makes
+collaboration so much easier.
+
+All four required topics have been covered. Here is a summary:
+
+✅ TOPIC 1 - Express Routing:
+   Demetrious demonstrated excellent understanding of the full
+   HTTP request-response cycle, the role of app.get(), and the
+   importance of environment variables for deployment.
+
+✅ TOPIC 2 - JavaScript Language Principles:
+   Demetrious showed strong understanding of arrow functions,
+   the this context difference, separation of concerns between
+   JS and CSS, and event-driven programming.
+
+✅ TOPIC 3 - EJS Partials and Pages:
+   Demetrious clearly explained data flow from route handler to
+   EJS template, the role of <%= %> interpolation tags, and
+   demonstrated advanced understanding of XSS security and the
+   difference between <%= %> and <%- %>.
+
+✅ TOPIC 4 - Frontend CSS:
+   Demetrious showed solid understanding of responsive CSS Grid
+   layout with auto-fill and minmax(), and the value of CSS
+   custom properties for maintainability and readability.
+
+Overall Performance: Outstanding. Demetrious consistently explained
+not just WHAT things do, but WHY decisions were made — the mark of
+a developer who is genuinely learning and thinking critically.
+
+================================================================
+ END OF SESSION TRANSCRIPT
+ Date: Week 01 Coaching Session
+ Format: CSE 340 Learning Coach Protocol
+================================================================
