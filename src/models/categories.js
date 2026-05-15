@@ -7,8 +7,13 @@ const getAllCategories = async () => {
         ORDER BY name ASC;
     `;
 
-    const result = await db.query(query);
-    return result.rows;
+    try {
+        const result = await db.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        throw error;
+    }
 };
 
 export { getAllCategories };

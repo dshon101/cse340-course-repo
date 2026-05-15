@@ -15,8 +15,13 @@ const getAllProjects = async () => {
         ORDER BY p.project_date ASC;
     `;
 
-    const result = await db.query(query);
-    return result.rows;
+    try {
+        const result = await db.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching projects:', error);
+        throw error;
+    }
 };
 
 export { getAllProjects };

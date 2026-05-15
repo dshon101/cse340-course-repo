@@ -1,0 +1,191 @@
+WEEK 02 COACHING SESSION TRANSCRIPT
+=====================================
+Participant: Demetrious
+Session Type: Learning Coaching Session (Not a Test)
+Topics Covered: Relational Database Design, Server-Side Data Access, Express Routing, EJS Templating
+=====================================
+
+COACH: Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay—and even encouraged—to say "I don't know" or "I made a mistake." That's the fastest way we'll learn today.
+
+I'm really looking forward to exploring your assignment with you and helping you reflect on the decisions you made along the way.
+
+To get us started — what's your name?
+
+DEMETRIOUS: Demetrious
+
+COACH: Great to meet you, Demetrious! This is a safe space to think out loud, make mistakes, and learn together — so feel free to be as open as you like.
+
+Let's dive in! To get us started on the right foot, could you give me a quick overview of what your assignment was about — what kind of application did you build, and what was it supposed to do?
+
+DEMETRIOUS: I built a Service Project Directory web application using Node.js and Express for the server, EJS for templating, and a SQL database for storage. The app manages three main entities, Organizations, Service Projects, and Categories, and serves web pages that display them all dynamically from the database. This week's focus was adding the Categories feature end-to-end, which involved designing the database tables (including a join table to handle the many-to-many relationship between projects and categories), writing the SQL, creating a categories.js model file, wiring up the /categories route in server.js, and rendering the results in categories.ejs.
+
+COACH: That sounds like a really well-structured project, Demetrious! A full end-to-end feature — from database design all the way to the rendered page — is no small thing, and it's clear you have a solid grasp of the big picture.
+
+I'd love to dig into the database design first since everything else builds on top of it. Could you paste the SQL you wrote to create your tables, particularly the ones involved in the many-to-many relationship between projects and categories?
+
+DEMETRIOUS:
+```sql
+CREATE TABLE project_category (
+    project_id   INT NOT NULL,
+    category_id  INT NOT NULL,
+    PRIMARY KEY (project_id, category_id),
+    CONSTRAINT fk_pc_project
+        FOREIGN KEY (project_id)
+        REFERENCES project(project_id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_pc_category
+        FOREIGN KEY (category_id)
+        REFERENCES category(category_id)
+        ON DELETE CASCADE
+);
+```
+
+COACH: That's a clean and well-structured join table! I can see you've used a composite primary key and added foreign key constraints with ON DELETE CASCADE on both sides.
+
+I want to focus on that ON DELETE CASCADE decision — can you explain in your own words what would happen if someone deleted a category from the category table, and why you chose to handle it that way?
+
+DEMETRIOUS: The project_category table is a join table, so it only records the relationship between projects and categories. If you delete a category, ON DELETE CASCADE removes any corresponding rows. The project remains, but the link is severed. This is meaningful because a join table entry is meaningless without both entities. Deleting a category would leave orphaned data, so cascading the delete keeps things clean and avoids errors. It's like saying, "if one side of the relationship goes, clean up the link."
+
+COACH: That's an excellent explanation, Demetrious! "If one side of the relationship goes, clean up the link" is a really intuitive way to think about it. You clearly understand why the constraint exists, not just how to write it.
+
+Now let's move into how you actually retrieve data from the database. Could you paste the Node.js function from your categories.js model file that queries the database for categories?
+
+DEMETRIOUS:
+```javascript
+import db from './db.js';
+
+const getAllCategories = async () => {
+    const query = `
+        SELECT category_id, name
+        FROM public.category
+        ORDER BY name ASC;
+    `;
+
+    const result = await db.query(query);
+    return result.rows;
+};
+
+export { getAllCategories };
+```
+
+COACH: Nice and clean — I like that it's focused and does one thing well. I also notice you're ordering the results alphabetically by name, which is a thoughtful touch for the end user.
+
+I want to ask about something that's missing from this function — looking at it now, is there anything you think could be added to make it more robust or safer, and why?
+
+DEMETRIOUS: The main thing missing is error handling. Right now, if the database query fails for any reason, maybe the connection drops, the table doesn't exist yet, or the DB is temporarily unavailable, the error will just bubble up unhandled, and depending on how the rest of my app is set up, it could crash the server or return a confusing response to the user.
+
+COACH: Exactly right! Unhandled errors bubbling up can cause unpredictable behavior, and in a production app that could mean a crashed server or a confused user staring at a blank page.
+
+Could you show me what the fix would look like — go ahead and paste a version of that function with proper error handling added?
+
+DEMETRIOUS:
+```javascript
+const getAllCategories = async () => {
+    const query = `
+        SELECT category_id, name
+        FROM public.category
+        ORDER BY name ASC;
+    `;
+
+    try {
+        const result = await db.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        throw error;
+    }
+};
+```
+Here it is, I think this might be right.
+
+COACH: That's exactly right! The try-catch block wraps the risky operation, logs the error so you can debug it, and then re-throws it so the calling code (your route handler) can decide how to respond to the user gracefully.
+
+Now let's move up the stack to your Express server. Could you paste the route handler from your server.js that handles the /categories path and calls your getAllCategories function?
+
+DEMETRIOUS:
+```javascript
+app.get('/categories', async (req, res) => {
+    const title = 'Service Project Categories';
+    const metaDesc = 'Browse service opportunities by category: environmental, educational, community service, and health and wellness.';
+    const categories = await getAllCategories();
+    res.render('categories', { title, metaDesc, categories });
+});
+```
+
+COACH: That's a nicely written route handler — it's readable, the variable names are descriptive, and you're passing exactly what the template needs.
+
+I notice something similar to what we spotted in the model file though — can you see what potential issue exists in this route handler, and what effect it could have on a user's experience if something went wrong?
+
+DEMETRIOUS: Yes, same issue as before — there's no try/catch around the await getAllCategories() call. If that function throws an error (say the database is down or the query fails), the route handler has nothing to catch it, which means Express would likely serve the user a generic 500 error page or potentially just hang with no response at all. Not a great experience.
+
+COACH: Spot on, Demetrious! You're really developing a good instinct for spotting that pattern now — anytime you see await without a try-catch in a route handler, that's a red flag worth addressing.
+
+We're onto the last topic now! Could you paste the relevant section from your categories.ejs template where you loop through and display the categories data that gets passed in from the route handler?
+
+DEMETRIOUS:
+```html
+<%- include('./partials/header') %>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">
+                <%= title %>
+            </h1>
+            <p class="page-subtitle">Find service opportunities organized by cause and impact area.</p>
+        </div>
+    </section>
+
+    <section class="categories-section">
+        <div class="container">
+            <div class="categories-grid">
+
+                <% categories.forEach(category=> { %>
+                    <article class="category-card">
+                        <h2>
+                            <%= category.name %>
+                        </h2>
+                        <a href="/projects" class="btn btn-outline btn-sm">Browse Projects</a>
+                    </article>
+                    <% }); %>
+
+            </div>
+        </div>
+    </section>
+
+    <%- include('./partials/footer') %>
+```
+
+COACH: That's a well-structured template, Demetrious! I can see you're using both <%- %> and <%= %> tags in the same file, which is a great opportunity to reflect on something.
+
+Looking at your template, you've used <%- include(...) %> for the partials and <%= category.name %> for displaying data — can you explain in your own words why you used different tags for each of those two cases?
+
+DEMETRIOUS: The reason I used different tags is whether or not I want the output escaped. <%= %> escapes values, so a malicious script in a category name is displayed as text, not executed. <%- %> outputs values raw, which is needed for partials since include() returns HTML. Using <%= %> on includes would escape the HTML, preventing rendering. So, <%= %> is for safe database data, and <%- %> is for trusted HTML like partials.
+
+COACH: That is a perfect explanation — you clearly understand both the what and the why behind each tag. The security instinct you showed there, thinking about malicious scripts in user data, is exactly the kind of thinking that separates a careful developer from a careless one.
+
+We've now covered all four topics — database design, server-side data access, Express routing, and EJS templating — and you handled every single one with confidence and depth. You should feel really good about that!
+
+=====================================
+SESSION SUMMARY
+=====================================
+Topic 1 - Relational Database Design: COVERED
+  - Discussed the project_category join table and many-to-many relationship
+  - Demonstrated strong understanding of ON DELETE CASCADE and orphaned data
+
+Topic 2 - Server-Side Data Access Logic (Node.js): COVERED
+  - Reviewed getAllCategories() function in categories.js
+  - Identified missing error handling and correctly implemented try-catch fix
+
+Topic 3 - Express Server Logic and Routing: COVERED
+  - Reviewed /categories route handler in server.js
+  - Identified missing try-catch around async call and its impact on user experience
+
+Topic 4 - Client-Side Rendering (EJS Templates): COVERED
+  - Reviewed categories.ejs template with forEach loop
+  - Demonstrated clear understanding of <%= %> vs <%- %> and security implications
+
+Overall Performance: Excellent — Demetrious demonstrated strong conceptual understanding
+across all four topics and showed great security awareness throughout.
+=====================================
+END OF TRANSCRIPT
+=====================================

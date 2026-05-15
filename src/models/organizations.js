@@ -3,12 +3,16 @@ import db from './db.js'
 const getAllOrganizations = async () => {
     const query = `
         SELECT organization_id, name, description, contact_email, logo_filename
-      FROM public.organization;
+        FROM public.organization;
     `;
 
-    const result = await db.query(query);
-
-    return result.rows;
+    try {
+        const result = await db.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching organizations:', error);
+        throw error;
+    }
 };
 
 export { getAllOrganizations };
