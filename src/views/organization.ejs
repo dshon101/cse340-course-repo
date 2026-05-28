@@ -1,0 +1,20 @@
+<%- include('./partials/header') %>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">
+                <%= organization.name %>
+            </h1>
+        </div>
+    </section>
+
+    <section class="container">
+        <p>
+            <%= organization.description %>
+        </p>
+        <p><strong>Contact:</strong>
+            <%= organization.contact_email %>
+        </p>
+    </section>
+
+    <%- include('./partials/footer') %>

@@ -15,4 +15,19 @@ const getAllOrganizations = async () => {
     }
 };
 
-export { getAllOrganizations };
+const getOrganizationDetails = async (id) => {
+    const query = `
+        SELECT organization_id, name, description, contact_email, logo_filename
+        FROM public.organization
+        WHERE organization_id = $1;
+    `;
+    try {
+        const result = await db.query(query, [id]);
+        return result.rows[0];
+    } catch (error) {
+        console.error('Error fetching organization details:', error);
+        throw error;
+    }
+};
+
+export { getAllOrganizations, getOrganizationDetails };

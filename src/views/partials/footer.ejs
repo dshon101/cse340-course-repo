@@ -1,10 +1,10 @@
   </main>
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <p class="footer-logo">◈ ServeConnect</p>
-      <p class="footer-copy">&copy; <%= new Date().getFullYear() %> ServeConnect. All rights reserved.</p>
-      <p class="footer-tagline">Connecting communities through service.</p>
-    </div>
+  <footer>
+    <p>&copy; <%= new Date().getFullYear() %> CSE 340 Service Network.
+        <% if (NODE_ENV==='development' ) { %>
+          (Development mode)
+          <% } %>
+    </p>
   </footer>
   <script>
     const toggle = document.querySelector('.nav-toggle');
