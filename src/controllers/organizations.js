@@ -1,3 +1,5 @@
+import { getOrganizationDetails } from '../models/organizations.js';
+
 const showOrganizationDetailsPage = async (req, res) => {
     const { id } = req.params;
     try {
@@ -8,6 +10,9 @@ const showOrganizationDetailsPage = async (req, res) => {
             organization 
         });
     } catch (error) {
-        res.status(500).render('error', { message: 'Could not load organization.' });
+        console.error('Error loading organization:', error);
+        res.status(500).render('error', { message: 'Could not load organization. Please try again later.' });
     }
 };
+
+export { showOrganizationDetailsPage };
