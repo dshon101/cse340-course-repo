@@ -13,17 +13,17 @@
         <div class="container">
             <div class="categories-grid">
 
-                <% categories.forEach(category=> { %>
+                <% categories.forEach(category => { %>
                     <article class="category-card">
                         <h2>
-                            <%= category.name %>
+                            <a href="/category/<%= category.category_id %>"><%= category.name %></a>
                         </h2>
-                        <a href="/projects" class="btn btn-outline btn-sm">Browse Projects</a>
+                        <a href="/category/<%= category.category_id %>" class="btn btn-outline btn-sm">Browse Projects</a>
                     </article>
-                    <% }); %>
+                <% }); %>
 
             </div>
         </div>
     </section>
 
-    <%- include('./partials/footer') %>
+<%- include('./partials/footer') %>

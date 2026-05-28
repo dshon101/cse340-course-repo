@@ -9,21 +9,23 @@
     </section>
 
     <section class="container">
-        <p>
-            <%= project.description %>
-        </p>
+        <p><%= project.description %></p>
         <p><strong>Date:</strong>
-            <%= new Date(project.project_date).toLocaleDateString('en-US', { year: 'numeric' , month: 'long' ,
-                day: 'numeric' , timeZone: 'UTC' }) %>
+            <%= new Date(project.project_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) %>
         </p>
-        <p><strong>Location:</strong>
-            <%= project.location %>
-        </p>
+        <p><strong>Location:</strong> <%= project.location %></p>
         <p><strong>Organization:</strong>
-            <a href="/organization/<%= project.organization_id %>">
-                <%= project.organization_name %>
-            </a>
+            <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
         </p>
+
+        <% if (categories && categories.length > 0) { %>
+            <div class="category-tags">
+                <strong>Categories:</strong>
+                <% categories.forEach(category => { %>
+                    <a href="/category/<%= category.category_id %>" class="category-tag"><%= category.name %></a>
+                <% }); %>
+            </div>
+        <% } %>
     </section>
 
-    <%- include('./partials/footer') %>
+<%- include('./partials/footer') %>

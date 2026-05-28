@@ -1,4 +1,5 @@
 import { getUpcomingProjects, getProjectDetails } from '../models/projects.js';
+import { getCategoriesByProject } from '../models/categories.js';
 
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
@@ -15,10 +16,11 @@ const showProjectsPage = async (req, res) => {
 };
 
 const showProjectDetailsPage = async (req, res) => {
-    const { id } = req.params; // gets the ID from the URL
+    const { id } = req.params;
     try {
         const project = await getProjectDetails(id);
-        res.render('project', {title: project.title, metaDesc: project.description, project });
+        const categories = await getCategoriesByProject(id);
+        res.render('project', { title: project.title, metaDesc: project.description, project, categories });
     } catch (error) {
         console.error('Error loading project details:', error);
         res.status(500).render('error', { message: 'Could not load project.' });
