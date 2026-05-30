@@ -74,4 +74,29 @@ const getProjectDetails = async (id) => {
     }
 };
 
-export { getAllProjects, getUpcomingProjects, getProjectDetails };
+const getProjectsByOrganization = async (organization_id) => {
+    const query = `
+        SELECT
+            p.project_id,
+            p.title,
+            p.description,
+            p.location,
+            p.project_date,
+            p.organization_id,
+            o.name AS organization_name
+        FROM public.project p
+        JOIN public.organization o
+            ON p.organization_id = o.organization_id
+        WHERE p.organization_id = $1
+        ORDER BY p.project_date ASC;
+    `;
+    try {
+        const result = await db.query(query, [organization_id]);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching projects by organization:', error);
+        throw error;
+    }
+};
+
+export { getAllProjects, getUpcomingProjects, getProjectDetails, getProjectsByOrganization };
