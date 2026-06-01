@@ -26,9 +26,11 @@
         <% } %>
     </div>
 
-    <div class="action-buttons">
-        <a href="/edit-organization/<%= organization.organization_id %>" class="btn-secondary">✏️ Edit Organization</a>
-    </div>
+    <% if (user && user.role_name === 'admin') { %>
+        <div class="action-buttons">
+            <a href="/edit-organization/<%= organization.organization_id %>" class="btn-secondary">✏️ Edit Organization</a>
+        </div>
+    <% } %>
 </section>
 
 <%- include('./partials/footer') %>

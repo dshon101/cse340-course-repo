@@ -41,8 +41,9 @@
             </div>
         </div>
     </section>
-    <div class="container" style="padding-bottom: 2rem;">
-        <a href="/new-project" class="action-link">+ Add a New Service Project</a>
-    </div>
-
+    <% if (user && user.role_name === 'admin') { %>
+        <div class="container" style="padding-bottom: 2rem;">
+            <a href="/new-project" class="action-link">+ Add a New Service Project</a>
+        </div>
+    <% } %>
     <%- include('./partials/footer') %>

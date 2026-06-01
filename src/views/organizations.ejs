@@ -36,8 +36,10 @@
             </div>
         </div>
     </section>
-    <div class="container" style="padding-bottom: 2rem;">
-        <a href="/new-organization" class="action-link">+ Add a New Organization</a>
-    </div>
+    <% if (user && user.role_name === 'admin') { %>
+        <div class="container" style="padding-bottom: 2rem;">
+            <a href="/new-organization" class="action-link">+ Add a New Organization</a>
+        </div>
+    <% } %>
 
     <%- include('./partials/footer') %>

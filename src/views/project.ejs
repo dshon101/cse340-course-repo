@@ -27,10 +27,12 @@
         <% } %>
     </div>
 
-    <div class="action-buttons">
-        <a href="/edit-project/<%= project.project_id %>" class="btn-secondary">✏️ Edit Project</a>
-        <a href="/assign-categories/<%= project.project_id %>" class="btn-secondary">🏷️ Edit Categories</a>
-    </div>
+    <% if (user && user.role_name === 'admin') { %>
+        <div class="action-buttons">
+            <a href="/edit-project/<%= project.project_id %>" class="btn-secondary">✏️ Edit Project</a>
+            <a href="/assign-categories/<%= project.project_id %>" class="btn-secondary">🏷️ Edit Categories</a>
+        </div>
+    <% } %>
 </section>
 
 <%- include('./partials/footer') %>
