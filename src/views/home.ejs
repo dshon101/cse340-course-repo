@@ -13,6 +13,9 @@
                 <a href="/organizations" class="btn btn-primary">View Organizations</a>
                 <a href="/projects" class="btn btn-outline">Explore Projects</a>
             </div>
+            <% if (isLoggedIn) { %>
+                <p><a href="/dashboard">My Dashboard</a></p>
+            <% } %>
         </div>
         <div class="hero-art">
             <div class="art-ring ring-1"></div>

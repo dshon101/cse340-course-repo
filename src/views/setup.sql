@@ -149,3 +149,48 @@ INSERT INTO project_category (project_id, category_id) VALUES
 (14, 4),  -- Blood Drive Coordination          → Health and Wellness
 (14, 3),  -- Blood Drive Coordination          → Community Service
 (15, 3);  -- Holiday Toy Donation Sort         → Community Service
+
+-- ========================================
+-- Authentication — Roles & Users Tables
+-- ========================================
+
+-- Create the roles table:
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+-- Insert the two default roles:
+INSERT INTO roles (role_name, role_description) VALUES 
+    ('user', 'Standard user with basic access'),
+    ('admin', 'Administrator with full system access');
+
+-- Verify
+SELECT * FROM roles;
+
+-- Create the users table:
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER REFERENCES roles(role_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ========================================
+--Test the relationship with a test user, then clean up:
+-- ========================================
+
+-- Insert a test user
+INSERT INTO users (name, email, password_hash, role_id) 
+VALUES ('testuser', 'test@example.com', 'placeholder_hash', 1);
+
+-- Verify the join works
+SELECT u.user_id, u.name, u.email, r.role_name, r.role_description
+FROM users u
+JOIN roles r ON u.role_id = r.role_id;
+
+-- Delete the test user
+DELETE FROM users WHERE email = 'test@example.com';
