@@ -19,7 +19,16 @@
                 <h3>Your Profile</h3>
                 <p><strong>Name:</strong> <%= name %></p>
                 <p><strong>Email:</strong> <%= email %></p>
+                <p><strong>Role:</strong> <%= user.role_name %></p>
             </div>
+
+            <% if (user && user.role_name === 'admin') { %>
+                <div class="feature-card">
+                    <h3>Admin Tools</h3>
+                    <p>Manage registered users and system settings.</p>
+                    <a href="/users" class="btn btn-primary" style="margin-top: 1rem;">View All Users</a>
+                </div>
+            <% } %>
         </div>
     </div>
 </section>
