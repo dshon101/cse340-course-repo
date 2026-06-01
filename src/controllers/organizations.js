@@ -21,14 +21,16 @@ const showOrganizationDetailsPage = async (req, res) => {
 
 const showNewOrganizationForm = async (req, res) => {
     const title = 'Add New Organization';
-    res.render('new-organization', { title });
+    const metaDesc = 'Add a new partner organization to ServeConnect.';
+    res.render('new-organization', { title, metaDesc });
 };
 
 const showEditOrganizationForm = async (req, res) => {
     const organizationId = req.params.id;
     const organizationDetails = await getOrganizationDetails(organizationId);
     const title = 'Edit Organization';
-    res.render('edit-organization', { title, organizationDetails });
+    const metaDesc = `Edit details for ${organizationDetails.name}.`;
+    res.render('edit-organization', { title, metaDesc, organizationDetails });
 };
 
 const organizationValidation = [

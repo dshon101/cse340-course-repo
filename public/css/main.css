@@ -840,3 +840,22 @@ a {
     background-color: #d1ecf1;
     border-color: #bee5eb;
 }
+
+/* Bottom action link */
+.action-link {
+    display: inline-block;
+    margin: 24px 0 16px;
+    padding: 12px 28px;
+    background-color: var(--color-accent, #4a7c59);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.action-link:hover {
+    background-color: var(--color-accent-dark, #375c42);
+    color: #fff;
+}

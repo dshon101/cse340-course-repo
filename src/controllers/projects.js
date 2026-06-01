@@ -32,7 +32,8 @@ const showProjectDetailsPage = async (req, res) => {
 const showNewProjectForm = async (req, res) => {
     const organizations = await getAllOrganizations();
     const title = 'Add New Service Project';
-    res.render('new-project', { title, organizations });
+    const metaDesc = 'Add a new service project to ServeConnect.';
+    res.render('new-project', { title, metaDesc, organizations });
 };
 
 const projectValidation = [
