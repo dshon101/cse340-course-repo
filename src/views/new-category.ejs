@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-title"><%= title %></h1>
+    </div>
+</section>
+
+<section class="container">
+    <div class="form-section">
+        <form action="/new-category" method="POST">
+            <div class="form-group">
+                <label for="name">Category Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    maxlength="100"
+                    required
+                    placeholder="e.g. Environmental"
+                />
+            </div>
+            <div class="action-buttons">
+                <button type="submit" class="btn-primary">Create Category</button>
+                <a href="/categories" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<%- include('partials/footer') %>
