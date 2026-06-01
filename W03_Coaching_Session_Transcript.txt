@@ -1,0 +1,353 @@
+Week 03 Coaching Session Transcript
+=====================================
+Student: Demetrious Shoniwa
+Date: May 30, 2026
+=====================================
+
+COACH: Welcome! Just to be clear from the start, this is a coaching session, not a test. 
+It is perfectly okay—and even encouraged—to say 'I don't know' or 'I made a mistake.' 
+That's the fastest way we'll learn today.
+
+I'm here as your Learning Coach and Software Mentor, and my only goal is to help you 
+reflect on your work, understand your decisions, and close any knowledge gaps along the 
+way. There's no grade here — just a good conversation.
+
+Before we dive in, could you tell me your name so I can address you properly throughout 
+our session?
+
+DEMETRIOUS: Demetrious
+
+COACH: Great to meet you, Demetrious! Just to reinforce what I said at the start — this 
+is a completely safe space. If there's something you're unsure about or something you feel 
+you didn't quite get right in your code, that's totally fine and actually really valuable 
+for us to explore together.
+
+We'll be chatting about four areas today: your Models, Views, Controllers, and Error 
+Handling. We'll go through them naturally in conversation, and I'll ask you to share some 
+code snippets along the way so we can talk through your thinking.
+
+Let's start with the foundation of your app — the Models.
+
+Can you paste the code from one of your model files (like src/models/projects.js) into 
+the chat so we can talk through it together?
+
+DEMETRIOUS: [Pasted src/models/projects.js]
+
+import db from './db.js';
+
+const getAllProjects = async () => {
+    const query = `
+        SELECT
+            p.project_id,
+            p.title,
+            p.description,
+            p.location,
+            p.project_date,
+            o.name AS organization_name
+        FROM public.project p
+        JOIN public.organization o
+            ON p.organization_id = o.organization_id
+        ORDER BY p.project_date ASC;
+    `;
+    try {
+        const result = await db.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching projects:', error);
+        throw error;
+    }
+};
+
+const getUpcomingProjects = async (number_of_projects) => {
+    const query = `
+        SELECT
+            p.project_id,
+            p.title,
+            p.description,
+            p.location,
+            p.project_date,
+            p.organization_id,
+            o.name AS organization_name
+        FROM public.project p
+        JOIN public.organization o
+            ON p.organization_id = o.organization_id
+        WHERE p.project_date >= CURRENT_DATE
+        ORDER BY p.project_date ASC
+        LIMIT $1;
+    `;
+    try {
+        const result = await db.query(query, [number_of_projects]);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching upcoming projects:', error);
+        throw error;
+    }
+};
+
+const getProjectDetails = async (id) => {
+    const query = `
+        SELECT
+            p.project_id,
+            p.title,
+            p.description,
+            p.location,
+            p.project_date,
+            p.organization_id,
+            o.name AS organization_name
+        FROM public.project p
+        JOIN public.organization o
+            ON p.organization_id = o.organization_id
+        WHERE p.project_id = $1;
+    `;
+    try {
+        const result = await db.query(query, [id]);
+        return result.rows[0];
+    } catch (error) {
+        console.error('Error fetching project details:', error);
+        throw error;
+    }
+};
+
+const getProjectsByOrganization = async (organization_id) => {
+    const query = `
+        SELECT
+            p.project_id,
+            p.title,
+            p.description,
+            p.location,
+            p.project_date,
+            p.organization_id,
+            o.name AS organization_name
+        FROM public.project p
+        JOIN public.organization o
+            ON p.organization_id = o.organization_id
+        WHERE p.organization_id = $1
+        ORDER BY p.project_date ASC;
+    `;
+    try {
+        const result = await db.query(query, [organization_id]);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching projects by organization:', error);
+        throw error;
+    }
+};
+
+export { getAllProjects, getUpcomingProjects, getProjectDetails, getProjectsByOrganization };
+
+COACH: Great code, Demetrious! I can see you've put real thought into this.
+
+I want to focus on getUpcomingProjects specifically — I notice you're using $1 in the SQL 
+query and then passing [number_of_projects] in the execute statement, rather than putting 
+the value directly into the query string.
+
+Can you explain to me why you chose to do it that way instead of just writing something 
+like LIMIT ${number_of_projects} directly in the query string?
+
+DEMETRIOUS: This is done for security, data validation, and speed. This method is called 
+a parameterized query.
+
+COACH: Excellent answer, Demetrious! You're absolutely right — parameterized queries are 
+a key security practice.
+
+Can you go a little deeper on the security side specifically — what kind of attack does 
+using $1 with a parameterized query protect your application against?
+
+DEMETRIOUS: 
+1. Stops SQL Injection: ${} allows attackers to inject malicious commands into inputs, 
+potentially compromising your database. $1 ensures input is treated strictly as data, 
+making such attacks impossible.
+2. Prevents Syntax Errors: The database driver handles escaping special characters 
+(like quotes) automatically, ensuring data is formatted correctly before execution.
+3. Optimizes Performance: PostgreSQL caches execution plans. Because $1 keeps the query 
+structure constant, the database can reuse the same optimized plan, whereas ${} forces 
+a recompile for every unique value.
+
+COACH: That is an outstanding answer! You clearly understand not just what parameterized 
+queries do, but why they matter on multiple levels — security, reliability, and 
+performance. That's the kind of deep understanding that separates good developers from 
+great ones.
+
+Now let's move on to your Views.
+
+Can you paste a snippet from one of your EJS files — ideally one where you're inserting 
+data into a link, like in projects.ejs or organization.ejs?
+
+DEMETRIOUS: [Pasted projects.ejs]
+
+<%- include('./partials/header') %>
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">
+                <%= title %>
+            </h1>
+            <p class="page-subtitle">Explore active service projects and find volunteer 
+            opportunities that match your passion.</p>
+        </div>
+    </section>
+    <section class="projects-section">
+        <div class="container">
+            <div class="projects-list">
+                <% projects.forEach(project=> { %>
+                    <article class="project-card">
+                        <div class="project-meta">
+                            <span class="project-date">
+                                <%= new Date(project.project_date).toLocaleDateString('en-US', 
+                                { year: 'numeric', month: 'long', day: 'numeric', 
+                                timeZone: 'UTC' }) %>
+                            </span>
+                        </div>
+                        <h2>
+                            <a href="/project/<%= project.project_id %>">
+                                <%= project.title %>
+                            </a>
+                        </h2>
+                        <p><%= project.description %></p>
+                        <div class="project-footer">
+                            <span class="project-org">
+                                ◈ <a href="/organization/<%= project.organization_id %>">
+                                    <%= project.organization_name %>
+                                </a>
+                            </span>
+                            <span class="project-location">📍 <%= project.location %></span>
+                        </div>
+                    </article>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+<%- include('./partials/footer') %>
+
+COACH: Nice work, Demetrious! I can see your links are built dynamically using the project 
+and organization IDs.
+
+I notice you're using <%= %> to output data like project.title and project.organization_name.
+
+Can you explain to me why you chose <%= %> rather than <%- %> for displaying those values?
+
+DEMETRIOUS: The <%= %> tag was chosen because it automatically escapes HTML characters to 
+protect my application from Cross-Site Scripting (XSS) attacks. If a malicious user inserts 
+unsafe HTML code into a project title, such as a <script> tag, <%= %> safely converts those 
+characters into harmless text strings so the browser cannot execute them.
+
+COACH: Perfect explanation, Demetrious! You clearly understand the security implications 
+behind that choice, and connecting it directly to XSS attacks shows real depth of knowledge.
+
+Now let's move on to your Controllers.
+
+Can you paste a controller function from one of your controller files — ideally one that 
+has a route parameter in it, like showProjectDetailsPage or showOrganizationDetailsPage?
+
+DEMETRIOUS: [Pasted src/controllers/organizations.js]
+
+import { getOrganizationDetails } from '../models/organizations.js';
+import { getProjectsByOrganization } from '../models/projects.js';
+
+const showOrganizationDetailsPage = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const organization = await getOrganizationDetails(id);
+        const projects = await getProjectsByOrganization(id);
+        res.render('organization', { 
+            title: organization.name, 
+            metaDesc: organization.description,
+            organization,
+            projects
+        });
+    } catch (error) {
+        console.error('Error loading organization:', error);
+        res.status(500).render('error', { message: 'Could not load organization. 
+        Please try again later.' });
+    }
+};
+
+export { showOrganizationDetailsPage };
+
+COACH: Great code, Demetrious! I can see you're extracting the id from req.params and 
+using it to fetch both the organization and its projects.
+
+Can you explain to me what req.params is and where that id value actually comes from 
+when a user visits a page like /organization/3?
+
+DEMETRIOUS: The req.params object is a built-in Express feature that stores values 
+extracted from named placeholders in a route's URL path. When defining a route, you use 
+a colon to create a placeholder, such as /organization/:id. When a user visits 
+/organization/3, Express automatically matches that dynamic segment of the URL to the 
+placeholder, populating req.params.id with the value "3".
+
+COACH: Excellent answer! You've nailed exactly how route parameters work in Express — 
+the colon syntax, the dynamic matching, and how the value gets populated. That's a very 
+clear and complete explanation.
+
+Now let's move on to our final topic — Error Handling.
+
+Can you paste a code snippet from your application that shows how you handle errors, 
+particularly any place where you're using a 404 or 500 status page?
+
+DEMETRIOUS: We could use the same organizations.js code I sent you. [Repasted 
+src/controllers/organizations.js]
+
+COACH: Absolutely, that works perfectly!
+
+I can see that in your catch block you're using res.status(500).render('error', 
+{ message: '...' }) to handle server errors.
+
+Can you explain to me what specifically would trigger that catch block to run — in other 
+words, what kind of situation would cause your app to land in that error handler rather 
+than successfully rendering the organization page?
+
+DEMETRIOUS: The catch block kicks in if those async database functions fail for any 
+reason, like a connection issue, timeout, or a bad query. It also catches runtime crashes, 
+like if getOrganizationDetails returns null and tries to read a property from it. Plus, 
+it handles rendering issues, like if the template engine breaks or the view file is missing.
+
+COACH: Excellent answer, Demetrious! You've identified three distinct categories of errors 
+— database failures, runtime crashes, and rendering issues. That shows you really 
+understand the full picture of what can go wrong in a Node.js application.
+
+One small thing worth noting — you mentioned that getOrganizationDetails could return null 
+if no organization is found with that ID. In that case your app would crash with a runtime 
+error and land in the catch block, which would show a 500 error to the user.
+
+Can you think of why that might not be the most appropriate response to show the user in 
+that specific situation, and what status code might be more suitable?
+
+DEMETRIOUS: Sending a 500 error when something just isn't there is misleading because it 
+makes it look like the server crashed when it actually did its job perfectly. It clutters 
+up the logs with fake errors and makes it harder to spot real system issues. It's way 
+better to send a 404 instead; that way, the user knows the page just doesn't exist, and 
+you can keep your error logs clean and accurate.
+
+COACH: That is a fantastic answer, Demetrious! You didn't just identify the right status 
+code — you explained exactly why it matters from both the user experience and the developer 
+operations perspective. That's very professional thinking.
+
+Just to bring it full circle, here's what that improvement might look like in your code:
+
+const organization = await getOrganizationDetails(id);
+if (!organization) {
+    return res.status(404).render('error', { message: 'Organization not found.' });
+}
+
+That one small check makes your error handling much more precise and meaningful.
+
+Demetrious, we've now covered all four topics together — Models, Views, Controllers, and 
+Error Handling — and I have to say, you demonstrated a really strong understanding across 
+the board. You clearly know not just what your code does, but why you made the decisions 
+you did, which is exactly what good software development looks like.
+
+=====================================
+SESSION SUMMARY
+=====================================
+Topics Covered:
+  1. Models        - Parameterized queries, SQL injection prevention ✔
+  2. Views         - EJS tags, XSS prevention with <%= %> vs <%- %> ✔
+  3. Controllers   - Route parameters, req.params, Express routing ✔
+  4. Error Handling - try/catch, 500 vs 404 status codes ✔
+
+Overall Performance: Outstanding. Demetrious demonstrated deep understanding across
+all four topics, consistently connecting technical decisions to their security and
+architectural implications.
+=====================================
+End of Session
+=====================================
