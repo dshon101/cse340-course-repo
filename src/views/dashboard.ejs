@@ -1,9 +1,27 @@
 <%- include('partials/header') %>
-<main>
-    <h1><%= title %></h1>
 
-    <h2>Welcome back!</h2>
-    <p>Name: <%= name %></p>
-    <p>Username: <%= email %></p>
-</main>
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Dashboard</h1>
+        <p class="hero-desc">Welcome back, <strong><%= name %></strong>! Here's your account overview.</p>
+
+        <div class="hero-actions">
+            <a href="/organizations" class="btn btn-primary">View Organizations</a>
+            <a href="/projects" class="btn btn-outline">Explore Projects</a>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>Your Profile</h3>
+                <p><strong>Name:</strong> <%= name %></p>
+                <p><strong>Email:</strong> <%= email %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <%- include('partials/footer') %>
