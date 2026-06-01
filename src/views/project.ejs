@@ -1,14 +1,13 @@
 <%- include('./partials/header') %>
 
-    <section class="page-hero">
-        <div class="container">
-            <h1 class="page-title">
-                <%= project.title %>
-            </h1>
-        </div>
-    </section>
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-title"><%= project.title %></h1>
+    </div>
+</section>
 
-    <section class="container">
+<section class="container">
+    <div class="detail-card">
         <p><%= project.description %></p>
         <p><strong>Date:</strong>
             <%= new Date(project.project_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) %>
@@ -19,17 +18,19 @@
         </p>
 
         <% if (categories && categories.length > 0) { %>
+            <p><strong>Categories:</strong></p>
             <div class="category-tags">
-                <strong>Categories:</strong>
                 <% categories.forEach(category => { %>
                     <a href="/category/<%= category.category_id %>" class="category-tag"><%= category.name %></a>
                 <% }); %>
             </div>
         <% } %>
-    </section>
-    <section class="container">
-        <p><a href="/edit-project/<%= project.project_id %>">Edit Project</a></p>
-        <p><a href="/assign-categories/<%= project.project_id %>">Edit Categories</a></p>
-    </section>
+    </div>
+
+    <div class="action-buttons">
+        <a href="/edit-project/<%= project.project_id %>" class="btn-secondary">✏️ Edit Project</a>
+        <a href="/assign-categories/<%= project.project_id %>" class="btn-secondary">🏷️ Edit Categories</a>
+    </div>
+</section>
 
 <%- include('./partials/footer') %>

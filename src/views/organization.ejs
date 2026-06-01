@@ -1,23 +1,16 @@
 <%- include('./partials/header') %>
 
-    <section class="page-hero">
-        <div class="container">
-            <h1 class="page-title">
-                <%= organization.name %>
-            </h1>
-        </div>
-    </section>
+<section class="page-hero">
+    <div class="container">
+        <h1 class="page-title"><%= organization.name %></h1>
+    </div>
+</section>
 
-    <section class="container">
-        <p>
-            <%= organization.description %>
-        </p>
-        <p><strong>Contact:</strong>
-            <%= organization.contact_email %>
-        </p>
-    </section>
+<section class="container">
+    <div class="detail-card">
+        <p><%= organization.description %></p>
+        <p><strong>Contact:</strong> <%= organization.contact_email %></p>
 
-    <section class="container">
         <h2>Service Projects</h2>
         <% if (projects && projects.length > 0) { %>
             <ul class="project-list">
@@ -31,9 +24,11 @@
         <% } else { %>
             <p>No service projects found for this organization.</p>
         <% } %>
-    </section>
-    <section class="container">
-        <p><a href="/edit-organization/<%= organization.organization_id %>">Edit Organization</a></p>
-    </section>
+    </div>
+
+    <div class="action-buttons">
+        <a href="/edit-organization/<%= organization.organization_id %>" class="btn-secondary">✏️ Edit Organization</a>
+    </div>
+</section>
 
 <%- include('./partials/footer') %>

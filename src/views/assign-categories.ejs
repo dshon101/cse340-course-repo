@@ -8,24 +8,31 @@
 </section>
 
 <section class="container">
-    <form action="/assign-categories/<%= projectId %>" method="POST">
-        <div class="form-group">
-            <% categories.forEach(category => { %>
-                <div>
-                    <input
-                        type="checkbox"
-                        id="category-<%= category.category_id %>"
-                        name="categoryIds"
-                        value="<%= category.category_id %>"
-                        <%= assignedCategories.some(ac => ac.category_id === category.category_id) ? 'checked' : '' %>
-                    />
-                    <label for="category-<%= category.category_id %>"><%= category.name %></label>
+    <div class="form-section">
+        <form action="/assign-categories/<%= projectId %>" method="POST">
+            <div class="form-group">
+                <label>Select Categories</label>
+                <div class="checkbox-list">
+                    <% categories.forEach(category => { %>
+                        <div class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                id="category-<%= category.category_id %>"
+                                name="categoryIds"
+                                value="<%= category.category_id %>"
+                                <%= assignedCategories.some(ac => ac.category_id === category.category_id) ? 'checked' : '' %>
+                            />
+                            <label for="category-<%= category.category_id %>"><%= category.name %></label>
+                        </div>
+                    <% }); %>
                 </div>
-            <% }); %>
-        </div>
-
-        <button type="submit">Update Categories</button>
-    </form>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" class="btn-primary">Update Categories</button>
+                <a href="/project/<%= projectId %>" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
 </section>
 
 <%- include('partials/footer') %>

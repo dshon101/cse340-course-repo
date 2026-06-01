@@ -7,40 +7,23 @@
 </section>
 
 <section class="container">
-    <form action="/new-organization" method="POST">
-        <div class="form-group">
-            <label for="name">Organization Name</label>
-            <input
-                type="text"
-                id="name"
-                name="name"
-                maxlength="150"
-                required
-            />
-        </div>
-
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea
-                id="description"
-                name="description"
-                maxlength="500"
-                required
-            ></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="contactEmail">Contact Email</label>
-            <input
-                type="email"
-                id="contactEmail"
-                name="contactEmail"
-                required
-            />
-        </div>
-
-        <button type="submit">Create Organization</button>
-    </form>
+    <div class="form-section">
+        <form action="/new-organization" method="POST">
+            <div class="form-group">
+                <label for="name">Organization Name</label>
+                <input type="text" id="name" name="name" maxlength="150" required placeholder="e.g. Green Harvest Collective" />
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" maxlength="500" required placeholder="Describe what this organization does..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="contactEmail">Contact Email</label>
+                <input type="email" id="contactEmail" name="contactEmail" required placeholder="contact@example.org" />
+            </div>
+            <button type="submit" class="btn-primary">Create Organization</button>
+        </form>
+    </div>
 </section>
 
 <%- include('partials/footer') %>
