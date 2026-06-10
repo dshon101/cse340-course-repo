@@ -100,13 +100,32 @@ const showDashboard = async (req, res) => {
         res.status(500).render('error', { message: 'Could not load dashboard.' });
     }
 };
+
 const showUsersPage = async (req, res) => {
     try {
         const users = await getAllUsers();
+        const { getAllVolunteersWithProjects } = await import('../models/volunteers.js');
+        const volunteerData = await getAllVolunteersWithProjects();
+
+        // group the volunteer projects under each user_id so the view can look them up easily
+        const volunteersByUser = {};
+        volunteerData.forEach(row => {
+            if (!volunteersByUser[row.user_id]) {
+                volunteersByUser[row.user_id] = [];
+            }
+            volunteersByUser[row.user_id].push({
+                project_id: row.project_id,
+                project_title: row.project_title,
+                project_date: row.project_date,
+                organization_name: row.organization_name
+            });
+        });
+
         res.render('users', {
             title: 'Registered Users',
-            metaDesc: 'All registered users',
-            users
+            metaDesc: 'All registered users and their roles.',
+            users,
+            volunteersByUser
         });
     } catch (error) {
         console.error('Error loading users page:', error);

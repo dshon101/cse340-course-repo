@@ -1,79 +1,73 @@
 <%- include('partials/header') %>
 
-<section class="hero">
-    <div class="hero-content">
-        <h1 class="hero-title">Dashboard</h1>
-        <p class="hero-desc">Welcome back, <strong><%= name %></strong>! Here's your account overview.</p>
+<section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
 
-        <div class="hero-actions">
-            <a href="/organizations" class="btn btn-primary">View Organizations</a>
-            <a href="/projects" class="btn btn-outline">Explore Projects</a>
-        </div>
+    <h1 style="margin-bottom: 0.25rem;">Dashboard</h1>
+    <p style="margin-bottom: 1.5rem; color: #555;">Welcome back, <strong><%= name %></strong>! Here's your account overview.</p>
+
+    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+        <a href="/organizations" class="btn btn-primary">View Organizations</a>
+        <a href="/projects" class="btn btn-outline">Explore Projects</a>
     </div>
-</section>
 
-<section class="features">
-    <div class="container">
-        <div class="feature-grid">
+    <%# Profile + Admin cards side by side %>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
 
+        <div class="feature-card">
+            <h3>Your Profile</h3>
+            <p><strong>Name:</strong> <%= name %></p>
+            <p><strong>Email:</strong> <%= email %></p>
+            <p><strong>Role:</strong> <%= user.role_name %></p>
+        </div>
+
+        <% if (user && user.role_name === 'admin') { %>
             <div class="feature-card">
-                <h3>Your Profile</h3>
-                <p><strong>Name:</strong> <%= name %></p>
-                <p><strong>Email:</strong> <%= email %></p>
-                <p><strong>Role:</strong> <%= user.role_name %></p>
+                <h3>Admin Tools</h3>
+                <p>Manage registered users and system settings.</p>
+                <a href="/users" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">View All Users</a>
             </div>
-
-            <% if (user && user.role_name === 'admin') { %>
-                <div class="feature-card">
-                    <h3>Admin Tools</h3>
-                    <p>Manage registered users and system settings.</p>
-                    <a href="/users" class="btn btn-primary" style="margin-top: 1rem;">View All Users</a>
-                </div>
-            <% } %>
-
-        </div>
-
-        <%# My Volunteer Projects section %>
-        <div class="volunteer-projects" style="margin-top: 3rem;">
-            <h2>My Volunteer Projects</h2>
-
-            <% if (volunteerProjects && volunteerProjects.length > 0) { %>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
-                    <thead>
-                        <tr style="background-color: #f4f4f4; text-align: left;">
-                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Project</th>
-                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Organization</th>
-                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Date</th>
-                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Location</th>
-                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% volunteerProjects.forEach(project => { %>
-                            <tr>
-                                <td style="padding: 0.75rem; border: 1px solid #ddd;">
-                                    <a href="/project/<%= project.project_id %>"><%= project.title %></a>
-                                </td>
-                                <td style="padding: 0.75rem; border: 1px solid #ddd;"><%= project.organization_name %></td>
-                                <td style="padding: 0.75rem; border: 1px solid #ddd;">
-                                    <%= new Date(project.project_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) %>
-                                </td>
-                                <td style="padding: 0.75rem; border: 1px solid #ddd;"><%= project.location %></td>
-                                <td style="padding: 0.75rem; border: 1px solid #ddd;">
-                                    <form action="/project/<%= project.project_id %>/unvolunteer?from=dashboard" method="POST">
-                                        <button type="submit" class="btn-danger">Remove</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
-            <% } else { %>
-                <p style="margin-top: 1rem;">You have not signed up for any projects yet. <a href="/projects">Browse projects</a> to find one you'd like to volunteer for.</p>
-            <% } %>
-        </div>
+        <% } %>
 
     </div>
+
+    <%# Volunteer projects table %>
+    <h2 style="margin-bottom: 1rem;">My Volunteer Projects</h2>
+
+    <% if (volunteerProjects && volunteerProjects.length > 0) { %>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #2d5a27; color: white; text-align: left;">
+                    <th style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">Project</th>
+                    <th style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">Organization</th>
+                    <th style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">Date</th>
+                    <th style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">Location</th>
+                    <th style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% volunteerProjects.forEach(project => { %>
+                    <tr>
+                        <td style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">
+                            <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                        </td>
+                        <td style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;"><%= project.organization_name %></td>
+                        <td style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">
+                            <%= new Date(project.project_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) %>
+                        </td>
+                        <td style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;"><%= project.location %></td>
+                        <td style="padding: 0.65rem 0.75rem; border: 1px solid #ddd;">
+                            <form action="/project/<%= project.project_id %>/unvolunteer?from=dashboard" method="POST">
+                                <button type="submit" class="btn-danger" style="padding: 0.3rem 0.75rem;">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p style="color: #777;">You have not signed up for any projects yet. <a href="/projects">Browse projects</a> to find one.</p>
+    <% } %>
+
 </section>
 
 <%- include('partials/footer') %>

@@ -54,4 +54,26 @@ const getVolunteerProjectsByUser = async (userId) => {
     return result.rows;
 };
 
-export { addVolunteer, removeVolunteer, isVolunteer, getVolunteerProjectsByUser };
+// get all volunteers with their project info - used on the admin users page
+const getAllVolunteersWithProjects = async () => {
+    const query = `
+        SELECT
+            u.user_id,
+            u.name AS user_name,
+            u.email,
+            p.project_id,
+            p.title AS project_title,
+            p.project_date,
+            o.name AS organization_name,
+            vs.signed_up_at
+        FROM volunteer_signup vs
+        JOIN users u ON vs.user_id = u.user_id
+        JOIN project p ON vs.project_id = p.project_id
+        JOIN organization o ON p.organization_id = o.organization_id
+        ORDER BY u.name ASC, p.project_date ASC;
+    `;
+    const result = await db.query(query);
+    return result.rows;
+};
+
+export { addVolunteer, removeVolunteer, isVolunteer, getVolunteerProjectsByUser, getAllVolunteersWithProjects };
