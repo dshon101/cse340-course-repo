@@ -1,0 +1,251 @@
+WEEK 05 COACHING SESSION TRANSCRIPT
+Student: Demetrious
+=============================================
+
+COACH: Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay — and even encouraged — to say "I don't know" or "I made a mistake." That's the fastest way we'll learn today.
+
+Before we dive in, could you tell me your name so I know what to call you throughout our session?
+
+---------------------------------------------
+
+DEMETRIOUS: Demetrious
+
+---------------------------------------------
+
+COACH: Great to meet you, Demetrious! This is a safe space — there are no wrong answers here, and if something is unclear or you made a mistake in your code, that is exactly what we are here to talk through together.
+
+Let us start with the first topic. Can you paste in the code you wrote for registering a new user — specifically the part where you handle the form submission and save the user to the database?
+
+---------------------------------------------
+
+DEMETRIOUS:
+In src/controllers/users.js, this is the function that runs when the registration form is submitted:
+
+const processUserRegistrationForm = async (req, res) => {
+    const { name, email, password } = req.body;
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(password, salt);
+        const userId = await createUser(name, email, passwordHash);
+        req.flash('success', 'Registration successful! Please log in.');
+        res.redirect('/');
+    } catch (error) {
+        console.error('Error registering user:', error);
+        req.flash('error', 'An error occurred during registration. Please try again.');
+        res.redirect('/register');
+    }
+};
+
+In src/models/users.js, the createUser function saves the user to the database:
+
+const createUser = async (name, email, passwordHash) => {
+    const default_role = 'user';
+    const query = `
+        INSERT INTO users (name, email, password_hash, role_id) 
+        VALUES ($1, $2, $3, (SELECT role_id FROM roles WHERE role_name = $4)) 
+        RETURNING user_id
+    `;
+    const queryParams = [name, email, passwordHash, default_role];
+    const result = await db.query(query, queryParams);
+    if (result.rows.length === 0) {
+        throw new Error('Failed to create user');
+    }
+    return result.rows[0].user_id;
+};
+
+---------------------------------------------
+
+COACH: Nice work Demetrious! I can see you are using bcrypt to hash the password before saving it, which is exactly the right approach.
+
+Looking at this line specifically:
+
+const salt = await bcrypt.genSalt(10);
+const passwordHash = await bcrypt.hash(password, salt);
+
+Can you explain to me in your own words what a salt is and why it is important when hashing passwords?
+
+---------------------------------------------
+
+DEMETRIOUS: A salt is basically a random string of characters that gets added to the password before it is hashed. So even if two users have the exact same password, their hashes will look completely different in the database because each one gets its own unique salt.
+The reason this is important is because without a salt, hackers can use something called a rainbow table attack, which is basically a pre-computed list of common passwords and their hashes. If they get access to your database and your passwords are hashed without a salt, they can just look up the hash and find the original password instantly.
+By adding a salt, even if someone gets into the database, they cannot use those pre-computed tables because every hash is unique. The 10 I passed into bcrypt.genSalt(10) is called the salt rounds or cost factor, it controls how many times the hashing algorithm runs. The higher the number, the longer it takes to compute, which makes it even harder for someone to brute force the passwords. I chose 10 because it is a good balance between security and performance, it is strong enough to protect users but not so slow that it affects the experience of registering on the site.
+
+---------------------------------------------
+
+COACH: That is an excellent explanation Demetrious — you clearly understand not just what the salt does but why it matters from a security perspective. The point about rainbow tables and the cost factor shows solid thinking.
+
+Now let us move to the login side of things. Can you paste in the code you wrote that handles when a user submits the login form — the part that checks their password and decides whether to let them in?
+
+---------------------------------------------
+
+DEMETRIOUS:
+In src/controllers/users.js, this is the function that runs when the login form is submitted:
+
+const processLoginForm = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const user = await authenticateUser(email, password);
+        if (user) {
+            req.session.user = user;
+            req.flash('success', 'Login successful!');
+            console.log('User logged in:', user);
+            res.redirect('/dashboard');
+        } else {
+            req.flash('error', 'Invalid email or password.');
+            res.redirect('/login');
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        req.flash('error', 'An error occurred during login. Please try again.');
+        res.redirect('/login');
+    }
+};
+
+In src/models/users.js, the authenticateUser function is what actually checks the password:
+
+const authenticateUser = async (email, password) => {
+    const user = await findUserByEmail(email);
+    if (!user) return null;
+    const isValid = await verifyPassword(password, user.password_hash);
+    if (!isValid) return null;
+    delete user.password_hash;
+    return user;
+};
+
+---------------------------------------------
+
+COACH: Really good code Demetrious, and I notice something important you did on this line:
+
+delete user.password_hash;
+
+Can you explain why you deleted the password hash from the user object before storing it in the session?
+
+---------------------------------------------
+
+DEMETRIOUS: The reason I deleted the password hash before storing the user in the session is simply because the session does not need it. Once the user is authenticated, the job of the password hash is done, there is no reason to keep carrying it around in memory for the rest of the session.
+
+---------------------------------------------
+
+COACH: Exactly right — only store what you actually need in the session, and sensitive data like the password hash should be dropped as soon as it has served its purpose.
+
+Now I also notice you are using req.session.user to store the logged in user. Can you explain how that session actually persists between requests — like what is happening behind the scenes to remember who the user is as they navigate from page to page?
+
+---------------------------------------------
+
+DEMETRIOUS: So HTTP by itself is stateless, meaning every request the browser makes to the server is completely independent, the server has no memory of who you are from one request to the next. Sessions are the solution to that problem.
+
+---------------------------------------------
+
+COACH: That is a solid foundation — you clearly understand why sessions are needed in the first place.
+
+Can you take that a step further and explain what is actually happening on the server side to make that session persist — like where is the session data being stored, and how does the server know which session belongs to which user on each new request?
+
+---------------------------------------------
+
+DEMETRIOUS: When a user logs in successfully, express-session creates a unique session on the server and generates a random session ID. That session ID gets sent back to the browser as a cookie. So the browser is not storing the actual user data, it is just storing that small session ID cookie.
+Then every time the user navigates to a new page, the browser automatically sends that cookie along with the request. The server receives it, looks up the session ID, finds the matching session data on the server side, and that is how it knows who the user is. So when I do req.session.user = user after login, I am saving the user object on the server linked to that session ID.
+
+---------------------------------------------
+
+COACH: That is a textbook explanation Demetrious — you nailed every part of it, the cookie, the session ID, and how the server matches them up on each request.
+
+Now let us move to the third topic. Can you paste in the middleware you wrote that protects routes — specifically the code that checks whether a user is logged in before allowing them to access a page?
+
+---------------------------------------------
+
+DEMETRIOUS:
+So I have two middleware that handle this route protection. Every one of them is found in src/controllers/users.js.
+
+The first one is requireLogin which just checks if a user is logged in at all:
+
+const requireLogin = (req, res, next) => {
+    if (!req.session || !req.session.user) {
+        req.flash('error', 'You must be logged in to access that page.');
+        return res.redirect('/login');
+    }
+    next();
+};
+
+It checks if there is a session and if that session has a user object on it. If there is no user it flashes an error message and redirects them straight to the login page. If the user is logged in it calls next() which passes control to the next function in the chain, meaning the actual route handler runs and the user gets access to the page.
+
+The second one is requireRole which goes a step further and checks not just if the user is logged in but what role they have:
+
+const requireRole = (role) => {
+    return (req, res, next) => {
+        if (!req.session || !req.session.user) {
+            req.flash('error', 'You must be logged in to access this page.');
+            return res.redirect('/login');
+        }
+        if (req.session.user.role_name !== role) {
+            req.flash('error', 'You do not have permission to access this page.');
+            return res.redirect('/');
+        }
+        next();
+    };
+};
+
+This one is a function that returns a middleware function, which allows me to pass in the required role dynamically. So in my routes I can use it like this:
+
+router.get('/new-organization', requireRole('admin'), showNewOrganizationForm);
+
+That means only users with the admin role can access that page. Everyone else gets redirected to the home page with an error message. I used this pattern to protect all the admin routes like creating, editing, and deleting organizations, projects, and categories.
+
+---------------------------------------------
+
+COACH: Excellent explanation Demetrious — you clearly understand both middlewares well and the reason why requireRole returns a function rather than being a plain middleware itself is an important design decision.
+
+I want to focus on that for a second. You said requireRole is a function that returns a middleware function so you can pass in the role dynamically. Can you explain what would have gone wrong if you had tried to write requireRole the same way as requireLogin — as a plain middleware function instead of a function that returns one?
+
+---------------------------------------------
+
+DEMETRIOUS: If I had written requireRole the same way as requireLogin as a plain middleware function, the role would have had to be hardcoded inside it because plain middleware functions only receive req, res, and next, there is no way to pass extra information into them when you attach them to a route.
+
+---------------------------------------------
+
+COACH: Exactly right — and that would mean writing a separate middleware function for every single role, like requireAdmin, requireModerator, and so on, which would be repetitive and hard to maintain.
+
+Now let us move to the last topic. Can you paste in a snippet from one of your EJS templates that shows how you are conditionally showing or hiding navigation links based on whether the user is logged in or what role they have?
+
+---------------------------------------------
+
+DEMETRIOUS:
+src/views/partials/header.ejs
+
+<nav class="site-nav">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/organizations">Organizations</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <% if (isLoggedIn) { %>
+            <li><a href="/logout">Logout</a></li>
+        <% } else { %>
+            <li><a href="/register">Register</a></li>
+            <li><a href="/login">Login</a></li>
+        <% } %>
+    </ul>
+</nav>
+
+---------------------------------------------
+
+COACH: Good stuff — you are correctly hiding the login and register links once someone is logged in and showing logout instead.
+
+I notice though that your requireRole middleware protects admin routes on the server side, but looking at this navigation, there is no mention of checking for the admin role here. Can you think of why it might be useful to also check the user's role in the navigation template — for example to show or hide an admin link — even though the route itself is already protected by the middleware?
+
+---------------------------------------------
+
+DEMETRIOUS: Even though the route itself is already protected by requireRole('admin') on the server side, checking the role in the navigation template as well is still useful for a couple of reasons. The first is user experience, if an admin user is logged in and there is no admin link in the navigation, they would have no way of knowing that part of the site even exists unless they already knew the URL, and on the other hand if a regular user could see an admin link and then click it only to get an error message saying they do not have permission, that is a poor experience. The second reason is that it just looks more professional and cleaner, regular users never see links to pages they cannot access and admins can easily get to where they need to go. To implement this I would just update the header template to check the user's role like this <% if (isLoggedIn && user && user.role_name === 'admin') { %> and since user is already available in every template through res.locals I would not need to change anything in the server at all. So the middleware is the real security layer that actually blocks unauthorized access, and the template check is just there to improve the experience for the user.
+
+---------------------------------------------
+
+COACH: That is a really mature answer Demetrious — and the distinction you made at the end is the most important part. The middleware is the real security layer, the template check is just for user experience. A lot of developers get that confused and think hiding a link is enough to protect a route, but as you correctly understood, anyone could just type the URL directly into the browser and bypass the UI completely.
+
+That actually brings us to a natural close — we have now covered all four topics. You did really well today. To summarise what you demonstrated:
+
+- You understood why bcrypt salting protects against rainbow table attacks and why the cost factor of 10 is a sensible choice
+- You explained how sessions work under the hood with cookies and server side storage
+- You understood why requireRole needs to return a function rather than be a plain middleware
+- You understood the difference between server side security and UI level role checking
+
+=============================================
+END OF SESSION TRANSCRIPT

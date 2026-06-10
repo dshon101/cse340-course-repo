@@ -27,6 +27,22 @@
         <% } %>
     </div>
 
+    <%# Volunteer section — only show if the user is logged in %>
+    <% if (isLoggedIn) { %>
+        <div class="volunteer-section">
+            <% if (userIsVolunteer) { %>
+                <p class="volunteer-status">✅ You are volunteering for this project.</p>
+                <form action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+                    <button type="submit" class="btn-danger">Remove me as a volunteer</button>
+                </form>
+            <% } else { %>
+                <form action="/project/<%= project.project_id %>/volunteer" method="POST">
+                    <button type="submit" class="btn-primary">🙋 Volunteer for this project</button>
+                </form>
+            <% } %>
+        </div>
+    <% } %>
+
     <% if (user && user.role_name === 'admin') { %>
         <div class="action-buttons">
             <a href="/edit-project/<%= project.project_id %>" class="btn-secondary">✏️ Edit Project</a>

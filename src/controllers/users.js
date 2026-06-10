@@ -80,16 +80,25 @@ const requireRole = (role) => {
     };
 };
 
-const showDashboard = (req, res) => {
+const showDashboard = async (req, res) => {
     const user = req.session.user;
-    res.render('dashboard', {
-        title: 'Dashboard',
-        metaDesc: 'Your personal dashboard',
-        name: user.name,
-        email: user.email
-    });
-};
 
+    try {
+        const { getVolunteerProjectsByUser } = await import('../models/volunteers.js');
+        const volunteerProjects = await getVolunteerProjectsByUser(user.user_id);
+
+        res.render('dashboard', {
+            title: 'Dashboard',
+            metaDesc: 'Your personal dashboard',
+            name: user.name,
+            email: user.email,
+            volunteerProjects
+        });
+    } catch (error) {
+        console.error('Error loading dashboard:', error);
+        res.status(500).render('error', { message: 'Could not load dashboard.' });
+    }
+};
 const showUsersPage = async (req, res) => {
     try {
         const users = await getAllUsers();

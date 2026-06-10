@@ -194,3 +194,25 @@ JOIN roles r ON u.role_id = r.role_id;
 
 -- Delete the test user
 DELETE FROM users WHERE email = 'test@example.com';
+
+-- ========================================
+-- Volunteer Signups Table
+-- tracks which users have signed up for which projects
+-- (many-to-many: one user can volunteer for many projects,
+--  one project can have many volunteers)
+-- ========================================
+CREATE TABLE volunteer_signup (
+    signup_id   SERIAL PRIMARY KEY,
+    user_id     INT NOT NULL,
+    project_id  INT NOT NULL,
+    signed_up_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, project_id),
+    CONSTRAINT fk_signup_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_signup_project
+        FOREIGN KEY (project_id)
+        REFERENCES project(project_id)
+        ON DELETE CASCADE
+);

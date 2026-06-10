@@ -15,6 +15,7 @@
 <section class="features">
     <div class="container">
         <div class="feature-grid">
+
             <div class="feature-card">
                 <h3>Your Profile</h3>
                 <p><strong>Name:</strong> <%= name %></p>
@@ -29,7 +30,35 @@
                     <a href="/users" class="btn btn-primary" style="margin-top: 1rem;">View All Users</a>
                 </div>
             <% } %>
+
         </div>
+
+        <%# Volunteer projects section %>
+        <div class="volunteer-projects" style="margin-top: 2rem;">
+            <h2>Your Volunteer Projects</h2>
+
+            <% if (volunteerProjects && volunteerProjects.length > 0) { %>
+                <ul class="volunteer-list">
+                    <% volunteerProjects.forEach(project => { %>
+                        <li class="volunteer-item">
+                            <div>
+                                <a href="/project/<%= project.project_id %>"><strong><%= project.title %></strong></a>
+                                <p><%= project.organization_name %> &bull;
+                                    <%= new Date(project.project_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) %>
+                                </p>
+                                <p><%= project.location %></p>
+                            </div>
+                            <form action="/project/<%= project.project_id %>/unvolunteer?from=dashboard" method="POST">
+                                <button type="submit" class="btn-danger">Remove</button>
+                            </form>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>You have not signed up for any projects yet. <a href="/projects">Browse projects</a> to find one.</p>
+            <% } %>
+        </div>
+
     </div>
 </section>
 

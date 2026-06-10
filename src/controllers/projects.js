@@ -22,7 +22,21 @@ const showProjectDetailsPage = async (req, res) => {
     try {
         const project = await getProjectDetails(id);
         const categories = await getCategoriesByProject(id);
-        res.render('project', { title: project.title, metaDesc: project.description, project, categories });
+
+        // check if the logged-in user has already signed up for this project
+        let userIsVolunteer = false;
+        if (req.session && req.session.user) {
+            const { isVolunteer } = await import('../models/volunteers.js');
+            userIsVolunteer = await isVolunteer(req.session.user.user_id, id);
+        }
+
+        res.render('project', {
+            title: project.title,
+            metaDesc: project.description,
+            project,
+            categories,
+            userIsVolunteer
+        });
     } catch (error) {
         console.error('Error loading project details:', error);
         res.status(500).render('error', { message: 'Could not load project.' });
