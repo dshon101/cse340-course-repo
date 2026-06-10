@@ -92,6 +92,7 @@ const showDashboard = async (req, res) => {
             metaDesc: 'Your personal dashboard',
             name: user.name,
             email: user.email,
+            user,
             volunteerProjects
         });
     } catch (error) {

@@ -33,29 +33,43 @@
 
         </div>
 
-        <%# Volunteer projects section %>
-        <div class="volunteer-projects" style="margin-top: 2rem;">
-            <h2>Your Volunteer Projects</h2>
+        <%# My Volunteer Projects section %>
+        <div class="volunteer-projects" style="margin-top: 3rem;">
+            <h2>My Volunteer Projects</h2>
 
             <% if (volunteerProjects && volunteerProjects.length > 0) { %>
-                <ul class="volunteer-list">
-                    <% volunteerProjects.forEach(project => { %>
-                        <li class="volunteer-item">
-                            <div>
-                                <a href="/project/<%= project.project_id %>"><strong><%= project.title %></strong></a>
-                                <p><%= project.organization_name %> &bull;
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                    <thead>
+                        <tr style="background-color: #f4f4f4; text-align: left;">
+                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Project</th>
+                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Organization</th>
+                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Date</th>
+                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Location</th>
+                            <th style="padding: 0.75rem; border: 1px solid #ddd;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% volunteerProjects.forEach(project => { %>
+                            <tr>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">
+                                    <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                                </td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;"><%= project.organization_name %></td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">
                                     <%= new Date(project.project_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) %>
-                                </p>
-                                <p><%= project.location %></p>
-                            </div>
-                            <form action="/project/<%= project.project_id %>/unvolunteer?from=dashboard" method="POST">
-                                <button type="submit" class="btn-danger">Remove</button>
-                            </form>
-                        </li>
-                    <% }); %>
-                </ul>
+                                </td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;"><%= project.location %></td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">
+                                    <form action="/project/<%= project.project_id %>/unvolunteer?from=dashboard" method="POST">
+                                        <button type="submit" class="btn-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
             <% } else { %>
-                <p>You have not signed up for any projects yet. <a href="/projects">Browse projects</a> to find one.</p>
+                <p style="margin-top: 1rem;">You have not signed up for any projects yet. <a href="/projects">Browse projects</a> to find one you'd like to volunteer for.</p>
             <% } %>
         </div>
 
